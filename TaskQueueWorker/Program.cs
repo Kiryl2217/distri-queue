@@ -3,6 +3,8 @@
 // ====================================================
 
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
+using TaskQueueLibrary.Classes;
 
 // Бесконечный цикл для
 // принятия байтов от брокера.
@@ -14,13 +16,22 @@ while (true)
     // Подключаемся к брокеру.
     tcpWorker.Connect("127.0.0.1", 8888);
 
-    // Массив байтов.
-    byte[] data = new byte[1024];
 
-    // Получаем в переменную int
-    // количество байтов.
-    int bytes = tcpWorker.Receive(data);
 
-    // Отчет о полученном количестве байтов.
-    Console.WriteLine("Воркер получил число байтов: " + bytes);
+
+    // Получаем массив байтов.
+    byte[] receiveBytes = new byte[100];
+
+    int bytes = tcpWorker.Receive(receiveBytes);
+
+    // Преобразуем полученные байты в задание.
+    UserTask receiveTask = new UserTask(receiveBytes);
+
+    // Вывод на консоль задания.
+    Console.WriteLine("Воркер получил от клиента: Id - " + receiveTask.id + ", Команду - "
+        + receiveTask.command, ", Подписку - ", +receiveTask.subscription + ", Тип задачи - "
+        + receiveTask.type + ", Приоритет - " + receiveTask.priority + ". Всего получено байтов: " + receiveBytes.Length);
+
+
+
 }
